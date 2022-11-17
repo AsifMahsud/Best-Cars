@@ -3,9 +3,9 @@
 Returns:
     List: List of reviews for the given dealership
 """
-from cloudant.client import Cloudant # pylint: disable=import-error
-from cloudant.error import CloudantException # pylint: disable=import-error
-import requests # pylint: disable=import-error
+from cloudant.client import Cloudant
+from cloudant.error import CloudantException
+import requests
 
 
 def main(param_dict):

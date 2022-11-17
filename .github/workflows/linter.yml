@@ -8,8 +8,8 @@ on:
 
 jobs: # list of things to do
   lint_function_js:
-    name: Linting JavaScript Function # job name (unique id)
-    runs-on: ubuntu-latest # on which machine to run
+    name: Linting JavaScript Function 
+    runs-on: ubuntu-latest 
     steps: # list of steps
       - name: Install NodeJS
         uses: actions/setup-node@v3
@@ -29,8 +29,8 @@ jobs: # list of things to do
     
 
   lint_function_python:
-    name: Linting Python Function # job name (unique id)
-    runs-on: ubuntu-latest # on which machine to run
+    name: Linting Python Function 
+    runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.7
@@ -45,3 +45,21 @@ jobs: # list of things to do
       - name: Lint with Pylint
         run: pylint *.py
         working-directory: functions/sample/python
+
+  lint_django_server:
+    name: Linting Django Server 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with Pylint
+        run: pylint *.py
+        working-directory: server
