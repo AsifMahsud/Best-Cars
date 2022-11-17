@@ -5,12 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "node sample.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint . --ext .js --ignore-pattern node_modules/"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@cloudant/cloudant": "^4.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.27.0"
   }
 }
