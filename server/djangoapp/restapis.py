@@ -9,7 +9,9 @@ def get_request(url, api_key=None, **kwargs):
                                 auth=HTTPBasicAuth('apikey', api_key))
     else:
         response = requests.get(url, params=kwargs, headers={'Content-Type': 'application/json'})
-    return response.json()
+    if response.status_code == 200:
+        return response.json()
+    return None
 
 # Create a `post_request` to make HTTP POST requests
 def post_request(url, api_key=None, json_payload=None, **kwargs):
@@ -30,8 +32,8 @@ def get_dealers_from_cf(url):
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
 def get_dealer_reviews_from_cf(url, dealer_id):
     results = get_request(url, dealerId=dealer_id)
-    if 'rows' in results:
-        return [DealerReview(**review['doc']) for review in results['rows']]
+    if results:
+        return [DealerReview(**review) for review in results]
     return []
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text

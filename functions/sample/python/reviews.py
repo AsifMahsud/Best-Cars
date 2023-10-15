@@ -1,12 +1,22 @@
+import json
 from cloudant.client import Cloudant
 from flask import Flask, jsonify, request, abort
-import json
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+authenticator = IAMAuthenticator('tZ0immtcqvKeI6X5V-m2LSH7jzhOi6_KGhx5sVfetTWd')
+natural_language_understanding = NaturalLanguageUnderstandingV1(
+    version='2021-03-25',
+    authenticator=authenticator
+)
+natural_language_understanding.set_service_url('https://api.us-east.natural-language-understanding.watson.cloud.ibm.com/instances/a8cacbbb-9038-4d06-bc67-52f69f64641f')
 
 # Load Cloudant service credentials
 with open('../../.creds.json', 'r') as file:
     creds = json.load(file)
 
-cloudant_username = creds['COURCE_USERNAME']
+cloudant_username = creds['COUCH_USERNAME']
 cloudant_api_key = creds['IAM_API_KEY']
 cloudant_url = creds['COUCH_URL']
 
@@ -35,6 +45,15 @@ def get_reviews():
     else:
         # Fetch all documents when no dealership_id is provided
         data_list = [doc for doc in db.all_docs(include_docs=True)['rows']]
+
+    # Analyze sentiment for each review and add to data_list
+    for doc in data_list:
+        review_text = doc.get('review', '')
+        sentiment_response = natural_language_understanding.analyze(
+            text=review_text,
+            features=Features(sentiment=SentimentOptions())).get_result()
+        sentiment_label = sentiment_response['sentiment']['document']['label']
+        doc['sentiment'] = sentiment_label
 
     return jsonify(data_list)
 

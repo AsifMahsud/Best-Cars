@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const Cloudant = require('@cloudant/cloudant');
 const fs = require('fs');
-const creds = JSON.parse(fs.readFileSync('.creds.json', 'utf8'));
+const creds = JSON.parse(fs.readFileSync('../../.creds.json', 'utf8'));
 
 async function dbCloudantConnect() {
     try {

@@ -9,10 +9,60 @@
 
     <body>
 
-    <!--Add a nav bar here -->
-
-    <!-- Add reviews as cards -->
-
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/djangoapp/">Best Cars</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                <li class="nav-item active">
+                  <a class="nav-link" href="/djangoapp/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/djangoapp/about">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/djangoapp/contact">Contact Us</a>
+                </li>
+              </ul>
+              {% if user.is_authenticated %}
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text">Hello, {{ user.first_name }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/djangoapp/logout">Signout</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'djangoapp:add_review' dealer_id %}" class="btn btn-primary">Add Review</a>
+                    </li>
+                </ul>
+              {% else %}
+                <form class="form-inline my-2 my-lg-0 ml-auto" action="/djangoapp/login/" method="post">
+                    {% csrf_token %}
+                    <input class="form-control mr-sm-2" type="text" placeholder="Username" aria-label="Username" name="username">
+                    <input class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="Password" name="password">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+                </form>        
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/djangoapp/signup">Signup</a>
+                    </li>
+                </ul>
+                {% endif %}        
+            </div>
+        </nav>
+        <div class="card-columns">
+            {% for review in reviews %}
+            <div class="card">
+                <img class="card-img-left" src="{{MEDIA_URL}}/emoji/{{ review.sentiment }}.png" alt="Sentiment">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review.car_make }} {{ review.car_model }} ({{ review.car_year }})</h5>
+                    <p class="card-text">{{ review.review }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </body>
-
 </html>
