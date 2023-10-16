@@ -1,4 +1,5 @@
 import requests
+import random
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
 
@@ -36,6 +37,13 @@ def get_dealer_reviews_from_cf(url, dealer_id):
         return [DealerReview(**review) for review in results]
     return []
 
+def extract_car_details(car_string):
+    parts = car_string.split('-')
+    make = parts[0]
+    model = parts[1]
+    year = int(parts[2])
+    return make, model, year
+
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 def analyze_review_sentiments(url, api_key, text):
     payload = {
@@ -48,3 +56,24 @@ def analyze_review_sentiments(url, api_key, text):
     if 'sentiment' in response and 'document' in response['sentiment']:
         return response['sentiment']['document']['label']
     return None
+
+def post_review_to_cloudant(car, dealership, purchase, purchase_date, review):
+    car_make, car_model, car_year = extract_car_details(car)
+
+    payload = {
+        "id": random.randint(33, 333),
+        "car_make": car_make,
+        "car_model": car_model,
+        "car_year": car_year,
+        "dealership": dealership,
+        "name": car,
+        "purchase": purchase,
+        "purchase_date": purchase_date,
+        "review": review
+    }
+
+    url = "https://asifmahsud54-5000.theiadocker-2-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review"
+
+    response = requests.post(url, json=payload, headers={'Content-Type': 'application/json'})
+    
+    return response
